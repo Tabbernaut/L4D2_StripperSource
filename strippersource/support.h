@@ -8,6 +8,7 @@
  * License: see LICENSE.TXT
  * ===================================
  */
+#include <stdlib.h>
 #include "gameshim/intercom.h"
 
 extern stripper_game_t stripper_game;
