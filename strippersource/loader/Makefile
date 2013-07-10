@@ -1,7 +1,7 @@
 #(C)2004-2006 SourceMM Development Team
 # Makefile written by David "BAILOPAN" Anderson
 
-MMSOURCE = ../../mmsource-1.8
+MMSOURCE = ../../mmsource-1.9
 
 ### EDIT BELOW FOR OTHER PROJECTS ###
 

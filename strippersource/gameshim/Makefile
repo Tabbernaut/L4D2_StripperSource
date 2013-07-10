@@ -81,12 +81,12 @@ endif
 CFLAGS += -DSE_EPISODEONE=1 -DSE_DARKMESSIAH=2 -DSE_ORANGEBOX=3 -DSE_LEFT4DEAD=4 -DSE_LEFT4DEAD2=7
 
 LINK += $(HL2LIB)/tier1_i486.a $(HL2LIB)/mathlib_i486.a \
-		$(LIB_PREFIX)vstdlib$(LIB_SUFFIX) \
-		$(LIB_PREFIX)tier0$(LIB_SUFFIX) \
+		$(LIB_PREFIX)vstdlib_srv$(LIB_SUFFIX) \
+		$(LIB_PREFIX)tier0_srv$(LIB_SUFFIX) \
 		-lpthread -static-libgcc
 	
-INCLUDE += -I. -I$(HL2PUB) -I$(HL2PUB)/engine -I$(HL2PUB)/mathlib -I$(HL2PUB)/vstdlib \
-	-I$(HL2PUB)/tier0 -I$(HL2PUB)/tier1 -I$(METAMOD) -I$(METAMOD)/sourcehook \
+INCLUDE += -I. -I$(HL2PUB) -I$(HL2PUB)/engine -I$(HL2PUB)/mathlib -I$(HL2PUB)/vstdlib_srv \
+	-I$(HL2PUB)/tier0_srv -I$(HL2PUB)/tier1 -I$(METAMOD) -I$(METAMOD)/sourcehook \
 	-I$(SMSDK)/public -I$(SMSDK)/public/sourcepawn
 
 CFLAGS += -D_LINUX -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp \
@@ -146,8 +146,8 @@ $(BIN_DIR)/%.o: %.c
 all: check
 	mkdir -p $(BIN_DIR)/systems
 	mkdir -p $(BIN_DIR)/thread
-	ln -sf $(HL2LIB)/$(LIB_PREFIX)vstdlib$(LIB_SUFFIX) .;
-	ln -sf $(HL2LIB)/$(LIB_PREFIX)tier0$(LIB_SUFFIX) .;
+	ln -sf $(HL2LIB)/$(LIB_PREFIX)vstdlib_srv$(LIB_SUFFIX) .;
+	ln -sf $(HL2LIB)/$(LIB_PREFIX)tier0_srv$(LIB_SUFFIX) .;
 	$(MAKE) -f Makefile sourcemod
 
 check:

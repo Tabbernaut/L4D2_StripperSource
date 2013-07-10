@@ -2,7 +2,7 @@
 # Makefile written by David "BAILOPAN" Anderson
 #
 
-MMSOURCE = ../mmsource-1.8/core
+MMSOURCE = ../mmsource-1.9/core
 
 #####################################
 ### EDIT BELOW FOR OTHER PROJECTS ###
