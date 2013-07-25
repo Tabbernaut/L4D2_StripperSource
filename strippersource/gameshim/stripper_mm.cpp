@@ -34,6 +34,8 @@ static stripper_core_t stripper_core;
 static char game_path[256];
 static char stripper_path[256];
 static char stripper_cfg_path[256];
+static char stripper_cfg_path_base[256];
+static char stripper_cfg_path_fixes[256];
 
 SH_DECL_HOOK0(IVEngineServer, GetMapEntitiesString, SH_NOATTRIB, 0, const char *);
 SH_DECL_HOOK6(IServerGameDLL, LevelInit, SH_NOATTRIB, 0, bool, char const *, char const *, char const *, char const *, bool, bool);
@@ -85,6 +87,7 @@ log_message(const char* fmt, ...)
 
     buffer[sizeof(buffer) - 1] = '\0';
 
+    g_SMAPI->ConPrintf("STRIPPER: %s\n", buffer);
     g_SMAPI->LogMsg(g_PLAPI, "%s", buffer);
 }
 
@@ -118,12 +121,16 @@ static stripper_game_t stripper_game =
     NULL,
     NULL,
     NULL,
+    NULL,
+    NULL,
     log_message,
     path_format,
     get_map_name,
 };
 
 ConVar cvar_stripper_cfg_path("stripper_cfg_path", "addons/stripper", FCVAR_NONE, "Stripper Config Path");
+ConVar cvar_stripper_cfg_path_base("stripper_cfg_path_base", "", FCVAR_NONE, "Stripper Config Path - Shared: Config Base");
+ConVar cvar_stripper_cfg_path_fixes("stripper_cfg_path_fixes", "", FCVAR_NONE, "Stripper Config Path - Shared: Exploit Fixes");
 
 #if SOURCE_ENGINE >= SE_ORANGEBOX
 void stripper_cfg_path_changed(IConVar *var, const char *pOldValue, float flOldValue)
@@ -132,6 +139,24 @@ void stripper_cfg_path_changed(ConVar *var, const char *pOldValue)
 #endif
 {
     strncpy(stripper_cfg_path, cvar_stripper_cfg_path.GetString(), sizeof(stripper_cfg_path));
+}
+
+#if SOURCE_ENGINE >= SE_ORANGEBOX
+void stripper_cfg_path_base_changed(IConVar *var, const char *pOldValue, float flOldValue)
+#else
+void stripper_cfg_path_base_changed(ConVar *var, const char *pOldValue)
+#endif
+{
+    strncpy(stripper_cfg_path_base, cvar_stripper_cfg_path_base.GetString(), sizeof(stripper_cfg_path_base));
+}
+
+#if SOURCE_ENGINE >= SE_ORANGEBOX
+void stripper_cfg_path_fixes_changed(IConVar *var, const char *pOldValue, float flOldValue)
+#else
+void stripper_cfg_path_fixes_changed(ConVar *var, const char *pOldValue)
+#endif
+{
+    strncpy(stripper_cfg_path_fixes, cvar_stripper_cfg_path_fixes.GetString(), sizeof(stripper_cfg_path_fixes));
 }
 
 
@@ -154,9 +179,15 @@ StripperPlugin::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, boo
     stripper_game.game_path = game_path;
     stripper_game.stripper_path = "addons/stripper";
     stripper_game.stripper_cfg_path = stripper_cfg_path;
+    stripper_game.stripper_cfg_path_base = stripper_cfg_path_base;
+    stripper_game.stripper_cfg_path_fixes = stripper_cfg_path_fixes;
     strncpy(stripper_cfg_path, cvar_stripper_cfg_path.GetString(), sizeof(stripper_cfg_path));
+    strncpy(stripper_cfg_path_base, cvar_stripper_cfg_path_base.GetString(), sizeof(stripper_cfg_path_base));
+    strncpy(stripper_cfg_path_fixes, cvar_stripper_cfg_path_fixes.GetString(), sizeof(stripper_cfg_path_fixes));
 
     cvar_stripper_cfg_path.InstallChangeCallback( stripper_cfg_path_changed );
+    cvar_stripper_cfg_path_base.InstallChangeCallback( stripper_cfg_path_base_changed );
+    cvar_stripper_cfg_path_fixes.InstallChangeCallback( stripper_cfg_path_fixes_changed );
 
 #if SOURCE_ENGINE==SE_DARKMESSIAH
 	ICvar* cvar = GetICVar();
@@ -284,7 +315,7 @@ StripperPlugin::AllPluginsLoaded()
 const char*
 StripperPlugin::GetAuthor()
 {
-    return "BAILOPAN";
+    return "BAILOPAN (ed. by Tabun)";
 }
 
 const char*

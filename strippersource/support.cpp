@@ -40,7 +40,75 @@ parse_map(const char* map, const char* entities)
     char path[256];
 
     g_Stripper.SetEntityList(entities);
+    
+    // Shared: Fixes
+    if (strlen(stripper_game.stripper_cfg_path_fixes))
+    {
+        stripper_game.path_format(path,
+                sizeof(path),
+                "%s/%s/global_filters.cfg",
+                stripper_game.game_path,
+                stripper_game.stripper_cfg_path_fixes);
+        fp = fopen(path, "rt");
+        if (fp == NULL)
+        {
+            stripper_game.log_message("Could not find global filter file (shared: [fixes]): %s", path);
+        }
+        else
+        {
+            fclose(fp);
+            g_Stripper.ApplyFileFilter(path);
+        }
 
+        stripper_game.path_format(path,
+                sizeof(path),
+                "%s/%s/maps/%s.cfg",
+                stripper_game.game_path,
+                stripper_game.stripper_cfg_path_fixes,
+                map);
+        fp = fopen(path, "rt");
+        if (fp)
+        {
+            fclose(fp);
+            //stripper_game.log_message("Applying shared cfgs for [fixes] [filefilter]: %s", path);
+            g_Stripper.ApplyFileFilter(path);
+        }
+    }
+    
+    // Shared: Base
+    if (strlen(stripper_game.stripper_cfg_path_base))
+    {
+        stripper_game.path_format(path,
+                sizeof(path),
+                "%s/%s/global_filters.cfg",
+                stripper_game.game_path,
+                stripper_game.stripper_cfg_path_base);
+        fp = fopen(path, "rt");
+        if (fp == NULL)
+        {
+            stripper_game.log_message("Could not find global filter file (shared: [base]): %s", path);
+        }
+        else
+        {
+            fclose(fp);
+            g_Stripper.ApplyFileFilter(path);
+        }
+
+        stripper_game.path_format(path,
+                sizeof(path),
+                "%s/%s/maps/%s.cfg",
+                stripper_game.game_path,
+                stripper_game.stripper_cfg_path_base,
+                map);
+        fp = fopen(path, "rt");
+        if (fp)
+        {
+            fclose(fp);
+            g_Stripper.ApplyFileFilter(path);
+        }
+    }
+    
+    // MAP-based
     stripper_game.path_format(path,
             sizeof(path),
             "%s/%s/global_filters.cfg",
@@ -69,7 +137,7 @@ parse_map(const char* map, const char* entities)
         fclose(fp);
         g_Stripper.ApplyFileFilter(path);
     }
-
+    
     return g_Stripper.ToString();
 }
 
